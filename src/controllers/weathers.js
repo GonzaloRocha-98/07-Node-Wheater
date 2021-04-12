@@ -1,8 +1,9 @@
 const express = require('express');
-
-const CityRepository = require('../repositories/citiyRepository');
-const repository = new CityRepository();
-
+const Succes = require('../handler/succesHandler'); 
+const {
+    weatherByCoordinatesService,
+    weatherByCityIdService
+        } = require('../services/weatherService');
 
 /**
  * 
@@ -10,14 +11,31 @@ const repository = new CityRepository();
  * @param {express.Response} res 
  */
 
-const cities = async (req, res) => {  //tambien se podría usar (req = Request, res = Response)
+const weatherByCoordinates = async (req, res) => {  //tambien se podría usar (req = Request, res = Response)
+    const {lon, lat} = req.query;
+    const weather = await weatherByCoordinatesService(lon, lat);
+    const succes = new Succes(weather);
+    res.json(succes);
+};
 
-    res.json(await repository.findCities(req.params.city));
+/**
+ * 
+ * @param {express.Request} req 
+ * @param {express.Response} res 
+ */
+
+const weatherByCityId = async (req, res) => {  //tambien se podría usar (req = Request, res = Response)
+    const {city, id} = req.params;
+    const weather = await weatherByCityIdService(city, id);
+    const succes = new Succes(weather);
+    res.json(succes);
 };
 
 
 
+
 module.exports = {
-    cities,
+    weatherByCoordinates,
+    weatherByCityId
 }
  

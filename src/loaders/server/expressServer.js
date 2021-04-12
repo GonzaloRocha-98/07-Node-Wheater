@@ -12,7 +12,8 @@ class ExpressServer{
     constructor(){
         this.app = express();
         this.port = config.port;
-        this.basePath = `${config.api.prefix}/weather`;
+        this.basePathWeather = `${config.api.prefix}/weather`;
+        this.basePathCities = `${config.api.prefix}/cities`;
         this._middlewares();
         this._swaggerConfig();
         this._routes();
@@ -31,7 +32,8 @@ class ExpressServer{
             res.status(200).end();
         })    //ruta para verificar que la app esta viva 
 
-        this.app.use(this.basePath, require('../../routes/weather'));
+        this.app.use(this.basePathWeather, require('../../routes/weather'));
+        this.app.use(this.basePathCities, require('../../routes/cities'));
     }
 
     //.use es un middleware asi que va a ejecutar en medio de cuaquier cosa
