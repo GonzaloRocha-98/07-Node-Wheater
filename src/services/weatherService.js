@@ -19,12 +19,12 @@ const weatherByCoordinatesService = async(lon, lat) => {
 }
 
 const weatherByCityIdService = async(city,id)=>{
-    //logger.info(JSON.stringify(id));
+
     const cities = await cityRepository.findCities(city); 
-    const cityData = cities.features.filter(e => e.id === id);
-    //logger.info(JSON.stringify(cityData));
-    const lon = cityData[0].geometry.coordinates[0];
-    const lat = cityData[0].geometry.coordinates[1]; 
+    const cityData = cities.features.find(e => e.id === id);
+
+    const lon = cityData.geometry.coordinates[0];
+    const lat = cityData.geometry.coordinates[1]; 
     return await weatherByCoordinatesService(lon, lat)
 }
 
