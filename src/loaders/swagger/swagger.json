@@ -1,14 +1,10 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "API Rest base repo",
-    "description": "This is an api base to start new projects",
+    "title": "WEATHER API",
+    "description": "This is an api where you can get current weather of your city",
     "contact": {
       "email": "rochagonzalo@outlook.com"
-    },
-    "license": {
-      "name": "Apache 2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
     "version": "0.0.1"
   },
@@ -24,136 +20,213 @@
   ],
   "tags": [
     {
-      "name": "users",
-      "description": "Operations about users"
+      "name": "Weather",
+      "description": "Get current weather details"
     },
     {
-      "name": "developers",
-      "description": "Operations available to regular developers"
+      "name": "Cities",
+      "description": "Find cities"
     }
   ],
   "paths": {
-    "/users": {
+    "/cities/{city}": {
       "get": {
         "tags": [
-          "users"
+          "Cities"
         ],
-        "summary": "get users",
-        "description": "You can get all users",
-        "operationId": "getUsers",
+        "summary": "Get a list of locations with the same name that the sepecified city name",
+        "description": "City names equal to the specified city name are showed",
+        "parameters":[
+          {
+            "name" : "city",
+            "in": "path",
+            "description": "name of the city",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "The array of users in JSON format",
+            "description": "The array of cities in JSON format",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/User"
-                  }
+                  "type": "object",
+                  "$ref":"#/components/schemas/Success for City"
                 }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "users"
-        ],
-        "summary": "Create a new user",
-        "description": "Adds an user to the system",
-        "requestBody": {
-          "description": "User to add",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
               }
             }
           }
         }
       }
     },
-    "users/:id": {
-      "put": {
+    "/weather/": {
+      "get": {
         "tags": [
-          "users"
+          "Weather"
         ],
-        "summary": "Update an existing user by the id",
+        "summary": "Get current weather for specified coordinates",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "the id of the user that need to be updated",
+            "name": "lon",
+            "in": "query",
+            "description": "Longitude of the location to get current weather",
             "require": true,
             "schema": {
-              "type": "integer"
+              "type": "number"
+            }
+          },
+          {
+            "name": "lat",
+            "in": "query",
+            "description": "Latitude of the location to get current weather",
+            "require": true,
+            "schema": {
+              "type": "number"
             }
           }
         ],
-        "requestBody":{
-          "content": {
-            "application/json":{
-              "shema": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
-            "description": "The user has been updated",
+            "description": "Data about weather city",
             "content": {
               "application/json": {
-                "schema":{
-                  "$ref":"#/components/schemas/User"
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Weather"
                 }
               }
             }
-
           }
         }
+      }
+    },
+    "/weather/{city}/{id}": {
+      "get": {
+        "tags": [
+          "Weather"
+        ],
+      "summary": "Get current weather data for the city name and id provided",
+      "description": "Show weather data about city specified with name and id",
+      "parameters": [
+        {
+          "name": "city",
+          "in": "path",
+          "description": "Name of the city",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in":"path",
+          "description": "Id of the place",
+          "required": true,
+          "schema":{
+            "type":"string"
+          }
+        }
+      ],
+      "responses":{
+        "200":{
+          "description": "The current weather data in JSON format",
+          "content": {
+            "application/json":{
+              "schema":{
+                "$ref":"#/components/schemas/Success for Weather"
+              }
+            }
+          }
+        }
+      }  
       }
     }
   },
   "components": {
     "schemas": {
-      "User": {
+      "Success for City": {        
+        "type": "object",
+        "properties": {
+          "status":{
+            "description": "The status of the response.",
+            "type": "string",          
+            "example": "OK"
+          },
+          "data":{
+            "description": "The array data of cities.",
+            "type":"array",
+            "items":{
+              "$ref": "#/components/schemas/City" 
+            }
+          }
+        }
+      },
+      "Success for Weather": {        
+        "type": "object",
+        "properties": {
+          "status":{
+            "description": "The status of the response.",
+            "type": "string",          
+            "example": "OK"
+          },
+          "data":{      
+            "$ref": "#/components/schemas/Weather"
+          }
+        }
+      },
+      "City": {
         "required": [
           "name"
         ],
         "type": "object",
         "properties": {
           "id": {
+            "description": "The id of the city",
             "type": "string",
-            "format": "uuid",
-            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+            "example": "place.11905458085992730"
           },
           "name": {
+            "description": "The name of the city",
             "type": "string",
-            "example": "Widget Adapter"
+            "example": "Buenos Aires, Asuncion"
+          },
+          "longitude":{
+            "description": "The longitude of the city",
+            "type": "number",
+            "example": "-30.1231"
+          },
+          "latitude":{
+            "description": "Latitude of the city",
+            "type": "string",
+            "example": "40.123"
           }
         }
       },
-      "Manufacturer": {
-        "required": [
-          "name"
-        ],
+      "Weather": {
         "type": "object",
         "properties": {
-          "name": {
+          "description": {
+            "description": "Description of the weather",
             "type": "string",
-            "example": "ACME Corporation"
+            "example": "nublado"
           },
-          "homePage": {
-            "type": "string",
-            "format": "url",
-            "example": "https://www.acme-corp.com"
+          "temperature": {
+            "description": "The current temperature",
+            "type": "number",
+            "example": "23.3"
           },
-          "phone": {
-            "type": "string",
-            "example": "408-867-5309"
+          "temperatureMin": {
+            "description": "Temperature minimum",
+            "type": "number",
+            "example": "-4.3"
+          },
+          "temperatureMax": {
+            "description": "Temperature maximum",
+            "type": "number",
+            "example": "43.3"
           }
         }
       }
