@@ -25,3 +25,4 @@ The mapbox api return the location of a place and the openweather api return the
     * *Get/weather/{city}/{id}* Get the current weather with the name and id of a city 
 
     Check a swagger of the API (*/documentation*) to see how it works.
+    Or glance at https://node07-weather-api.herokuapp.com/documentation/
